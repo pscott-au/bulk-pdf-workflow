@@ -53,8 +53,12 @@ Using ImageMagick to convert pdf to jpg .. handy for use inside web GUI layout e
 
 [Angular CLI](https://cli.angular.io/) used as a modern web front-end framework. 
 
+
+[Angular Schema Form](http://schemaform.io/) is a set of AngularJS directives (and a couple of services) to generate Bootstrap 3 ready forms from a JSON Schema.
+
 [Google Blockly](https://developers.google.com/blockly/) could be incorporated to provide admin staff with an assisted programming IDE to define or refine the business rules through a simplified browser blocks interface as used by Scratch etc.
 
+[Mautic](https://www.mautic.org) marketing automation could provide a good use case. Personalising PDF for email etc as part of a campaign. e.g. based on customer profile email a PDF catalog including shop items as part of a campaign.
 
 ````bash
 convert           \
@@ -68,3 +72,15 @@ convert           \
     test.jpg
 ````
 
+# Unknowns / Current Issues etc
+
+* include vector graphics such as SVG as compoinents inside PDF? I suspect that need to rasterise which is less than ideal.
+* layout for print ( page size / orientation ) as part of batching
+
+# TODO / Action Plan
+
+* create a sample data set and be able to create a simple PDF for each row with a couple of simple interpolated variables
+* create a generic hook framework to allow processing of individual field values before rendering. NB will require workflow that pre-processes data in order 
+* confirm ability to batching generated PDF's into larger printable aggregate files
+* expand component rendering to include a set of common expected functional examples: date format, address lookup/format, db query, barcode render, string case and size clipping, dynamic image render, 
+* extend rendering component hooks to include persistance, bundling into workflows and provide web WYSIWYG PDF designer interface
