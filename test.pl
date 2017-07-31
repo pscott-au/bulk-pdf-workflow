@@ -9,6 +9,15 @@ use MIME::Base64;
 use Data::Dumper;
  use Time::HiRes qw(usleep ualarm gettimeofday tv_interval);
 
+=pod
+
+  this is an exploratory test.
+  hacked to include roughly structured workflow
+  is simplified:
+    - single page pdf only
+    - 
+
+=cut 
 
   #my $t0 = [gettimeofday];
   # do bunch of stuff here
@@ -58,17 +67,9 @@ sub generate_pdf
 {
     my ( $row, $id, $transformers ) = @_;
     my $pdf = PDF::API2->open( $job_setup->{pdf_template} );
-    my $page = $pdf->openpage(1);
-    my $font = $pdf->ttfont('fonts/OROSKO Free.ttf');
 
 
-    # Add some text to the page
-    my $text = $page->text();
-    $text->font($font, 20);
-    $text->translate(200, 700);
-    $text->text('Hello World!');
-
-    $pdf->saveas("output/test-$id.pdf");
+    return $pdf;
 }
 ###########################
 
@@ -93,14 +94,18 @@ sub generate_pdfs_from_data
     { 
         $stats->{count}++;
         print qq{-- $row->{name} $stats->{count} \n};
-        generate_pdf( $row, $stats->{count} );
+        my $pdf = generate_pdf( $row, $stats->{count} );
         foreach my $field_name ( keys %$row )
         {
             if ( defined $job->{callbacks}{$field_name}{process} )
             {
-                $job->{callbacks}{$field_name}{process}->( $field_name );
+                if ( defined $row->{$field_name} )
+                {
+                    $job->{callbacks}{$field_name}{process}->( $pdf, $row->{$field_name}  );
+                }
             }            
         }
+        $pdf->saveas("output/test-$stats->{count}.pdf");
     }
     $stats->{finish_hrt} = [gettimeofday];
     die('no records') unless ($stats->{count}>0);
@@ -136,7 +141,7 @@ sub test_data
    my @fields = qw/name email amount account_ref address_1 address_2/;
    my $data_rows = [];
 
-   for (my $i=0; $i<50; $i++)
+   for (my $i=0; $i<500; $i++)
    {
        my $row_data = {};
        foreach my $f (@fields ) { $row_data->{$f} = "$f$i";}
@@ -164,9 +169,29 @@ sub test_data
 
 sub handle_name
 {
-    my ( $d1 ) = @_;
-    print "test handle_name $d1\n";
+    my ( $pdf, $val ) = @_;
+    print "test handle_name with $val\n";
     #die('foo');
+    my $page = $pdf->openpage(1);
+    #my $font = $pdf->ttfont('fonts/OROSKO Free.ttf');
+    my $font = $pdf->corefont('Helvetica-Bold');
+    # Add some text to the page
+    my $text = $page->text();
+    $text->font($font, 12);
+    $text->translate(50, 690);
+    $text->text($val);
+    $text->translate(50, 670);
+    $text->text("$val line 2");
+
+    $text->translate(50, 3);
+    $text->text("$val line 3");
+
+    #$text->translate(50, 830);
+    #$text->text("$val line 4-3");
+
+$text->translate(50, 835);
+    $text->text("$val line 4-4");
+
 }
 
 
